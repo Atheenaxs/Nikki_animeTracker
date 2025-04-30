@@ -1,0 +1,25 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: nikki_db
+      POSTGRES_USER: nikki_user
+      POSTGRES_PASSWORD: nikki_password
+
+  web:
+    build:
+      context: .  # Assure-toi que cela pointe vers le répertoire racine de ton projet (là où se trouve le Dockerfile)
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
