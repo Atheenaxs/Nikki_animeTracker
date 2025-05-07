@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# USER
+AUTH_USER_MODEL = 'nikki.User'
 
 # Application definition
 
@@ -79,7 +81,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'nikki_db',
         'USER': 'postgres',
-        'PASSWORD': '',
+        'PASSWORD': 'bonjour',
         'HOST': 'localhost',
         'PORT': '5432',
     }
