@@ -1,0 +1,77 @@
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #1f1f1f;
+    color: #fff;
+}
+.gradient-bg {
+    background: linear-gradient(135deg, #1f1f1f 0%, #2d2d3a 50%, #2b2b4a 100%);
+}
+.bg-card {
+    background-color: #252530;
+}
+
+.hero-overlay {
+    background: linear-gradient(to right, rgba(31, 31, 31, 0.95) 0%, rgba(31, 31, 31, 0.8) 50%, rgba(31, 31, 31, 0.6) 100%);
+}
+.poster-card {
+    transition: all 0.3s ease;
+}
+.poster-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 10px 20px rgba(91, 91, 255, 0.2);
+}
+.poster-info {
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.7) 50%, rgba(0, 0, 0, 0) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.poster-card:hover .poster-info {
+    opacity: 1;
+}
+.custom-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+.custom-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #484852;
+    transition: .4s;
+    border-radius: 24px;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+input:checked + .slider {
+    background-color: #5b5bff;
+}
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+.custom-checkbox {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #5b5bff;
+    border-radius: 4px;
+    background-color: transparent;
