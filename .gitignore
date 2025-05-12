@@ -1,23 +1,51 @@
-# Python
+# === Environnement virtuel ===
+venv/
+ENV/
+env/
+.venv/
+
+# === Fichiers Python inutiles ===
 __pycache__/
 *.py[cod]
 *.pyo
+*.pyd
+*.pyc
+*.pdb
 
-# Environnement virtuel
-venv/
+# === Logs ===
+*.log
+
+# === Fichiers de base de données ===
+*.sqlite3
+db.sqlite3
+
+# === Paramètres d'environnement ===
+.env
 *.env
 
-# Fichiers système
-*.log
-*.pot
-*.pyc
+# === Systèmes d'exploitation ===
+.DS_Store
+Thumbs.db
 
-# Fichiers de configuration de Docker
-.docker/
+# === Fichiers de tests ou de couverture ===
+.coverage
+.tox/
+.noseids
+.pytest_cache/
+htmlcov/
+.cache
 
-# Autres fichiers temporaires
-*.bak
+# === IDE (VSCode, PyCharm, etc.) ===
+.vscode/
+.idea/
 *.swp
 
-# Fichiers de configuration de Visual Studio Code
-.vscode/
+# === Docker ===
+*.pid
+*.seed
+*.bak
+docker-compose.override.yml
+
+# === Django-specific ===
+staticfiles/
+media/
