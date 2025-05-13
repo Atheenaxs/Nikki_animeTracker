@@ -1,0 +1,31 @@
+<nav class="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex items-center justify-between bg-opacity-80 bg-[#1f1f1f] backdrop-blur-md">
+  <div class="flex items-center">
+    <a href="/" class="text-2xl font-['Pacifico'] text-white flex items-center">
+      <span class="text-primary">Nikki</span>
+    </a>
+  </div>
+
+  <div class="hidden md:flex items-center space-x-8">
+    <a href="/" class="nav-link active text-white hover:text-primary transition-colors">Accueil</a>
+    <a href="#" class="nav-link text-gray-300 hover:text-primary transition-colors">Animes</a>
+
+    <div class="relative group">
+      <a href="#" class="nav-link text-gray-300 hover:text-primary transition-colors">Genres</a>
+      <ul class="absolute hidden group-hover:block bg-[#1f1f1f] text-sm mt-2 rounded shadow-lg z-50 min-w-[160px]">
+        {% for genre in anime_genres %}
+          <li><a href="#" class="block px-4 py-2 text-white hover:bg-primary/20">{{ genre.name }}</a></li>
+        {% empty %}
+          <li class="px-4 py-2 text-gray-400 italic">Genres non disponibles</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <div class="flex items-center space-x-4">
+    <a href="#" class="hidden md:block text-gray-300 hover:text-primary transition-colors">
+      <div class="w-8 h-8 flex items-center justify-center"><i class="ri-user-line ri-lg"></i></div>
+    </a>
+    <button id="loginBtn" class="px-4 py-2 text-white bg-transparent border border-primary hover:bg-primary transition-colors !rounded-button whitespace-nowrap">Connexion</button>
+    <button id="signupBtn" class="px-4 py-2 text-white bg-primary hover:bg-opacity-90 transition-colors !rounded-button whitespace-nowrap">Inscription</button>
+  </div>
+</nav>

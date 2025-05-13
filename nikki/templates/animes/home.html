@@ -1,472 +1,102 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nikki - Suivez vos animes préférés</title>
 
-    <!-- Tailwind + config -->
-    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              primary: "#5b5bff",
-              secondary: "#8A2BE2",
-            },
-            borderRadius: {
-              none: "0px",
-              sm: "4px",
-              DEFAULT: "8px",
-              md: "12px",
-              lg: "16px",
-              xl: "20px",
-              "2xl": "24px",
-              "3xl": "32px",
-              full: "9999px",
-              button: "8px",
-            },
-          },
-        },
-      };
-    </script>
-
-    <!-- Fonts & Icons -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Pacifico&display=swap"
-      rel="stylesheet"
-    />
-
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
-  </head>
-
-  <body class="min-h-screen">
-    <!-- Navigation -->
-    <nav
-      class="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex items-center justify-between bg-opacity-80 bg-[#1f1f1f] backdrop-blur-md"
-    >
-      <div class="flex items-center">
-        <a
-          href="#"
-          class="text-2xl font-['Pacifico'] text-white flex items-center"
-        >
-          <span class="text-primary">Nikki</span>
-        </a>
-      </div>
-
-      <div class="hidden md:flex items-center space-x-8">
-        <a
-          href="#"
-          class="nav-link active text-white hover:text-primary transition-colors"
-          >Accueil</a
-        >
-        <a
-          href="#"
-          class="nav-link text-gray-300 hover:text-primary transition-colors"
-          >Animes</a
-        >
-        <a
-          href="#"
-          class="nav-link text-gray-300 hover:text-primary transition-colors"
-          >Genres</a
-        >
-      </div>
-
-      <div class="flex items-center space-x-4">
-        <a
-          href="#"
-          class="hidden md:block text-gray-300 hover:text-primary transition-colors"
-        >
-          <div class="w-8 h-8 flex items-center justify-center">
-            <i class="ri-user-line ri-lg"></i>
-          </div>
-        </a>
-        <button
-          id="loginBtn"
-          class="px-4 py-2 text-white bg-transparent border border-primary hover:bg-primary transition-colors !rounded-button whitespace-nowrap"
-        >
-          Connexion
-        </button>
-        <button
-          id="signupBtn"
-          class="px-4 py-2 text-white bg-primary hover:bg-opacity-90 transition-colors !rounded-button whitespace-nowrap"
-        >
-          Inscription
-        </button>
-      </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section
-      class="relative h-screen flex items-center justify-center overflow-hidden"
-      style="
-        background-image: url('{% static 'images/hero.png' %}');
-        background-size: cover;
-        background-position: center;
-      "
-    >
-      <div class="absolute inset-0 hero-overlay"></div>
-      <div class="container mx-auto px-6 z-10 w-full">
-        <div class="max-w-3xl">
-          <h1 class="text-4xl md:text-6xl font-bold mb-4 text-white">
-            Bienvenue sur <span class="text-primary">Nikki</span>
-          </h1>
-          <p class="text-xl md:text-2xl text-gray-200 mb-8">
-            Suivez vos animes préférés, gérez votre progression, et découvrez
-            les tendances du moment.
-          </p>
-          <div class="flex flex-col sm:flex-row gap-4">
-            <button
-              id="startNow"
-              class="px-6 py-3 bg-primary hover:bg-opacity-90 text-white font-medium !rounded-button whitespace-nowrap"
-            >
-              Commencer
-            </button>
-            <button
-              class="px-6 py-3 bg-transparent border border-white hover:border-primary hover:text-primary text-white font-medium transition-colors !rounded-button whitespace-nowrap"
-            >
-              Découvrir
-            </button>
-          </div>
+{% block content %}
+  <!-- Hero Section -->
+  <section
+    class="relative h-screen flex items-center justify-center overflow-hidden"
+    style="background-image: url('{% static 'images/hero.png' %}'); background-size: cover; background-position: center;">
+    <div class="absolute inset-0 hero-overlay"></div>
+    <div class="container mx-auto px-6 z-10 w-full">
+      <div class="max-w-3xl">
+        <h1 class="text-4xl md:text-6xl font-bold mb-4 text-white">
+          Bienvenue sur <span class="text-primary">Nikki</span>
+        </h1>
+        <p class="text-xl md:text-2xl text-gray-200 mb-8">
+          Suivez vos animes préférés, gérez votre progression, et découvrez les tendances du moment.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <button id="startNow" class="px-6 py-3 bg-primary hover:bg-opacity-90 text-white font-medium !rounded-button whitespace-nowrap">
+            Commencer
+          </button>
+          <button class="px-6 py-3 bg-transparent border border-white hover:border-primary hover:text-primary text-white font-medium transition-colors !rounded-button whitespace-nowrap">
+            Découvrir
+          </button>
         </div>
       </div>
-    </section>
-    <!-- Anime Tendances -->
-    <section class="py-16 px-6 text-center">
-      <h2 class="text-2xl md:text-3xl font-bold mb-6">Tendances actuelles</h2>
-      <div
-        class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 mt-10"
-      >
-        {% for anime in top_animes %}
+    </div>
+  </section>
+
+  <!-- Anime Tendances -->
+  <section class="py-16 px-6 text-center">
+    <h2 class="text-2xl md:text-3xl font-bold mb-6">Tendances actuelles</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 mt-10">
+      {% for anime in top_animes %}
         <div class="poster-card rounded-lg overflow-hidden bg-card text-left">
           <div class="relative">
-            <img
-              src="{{ anime.images.jpg.image_url }}"
-              alt="{{ anime.title }}"
-              class="w-full h-auto object-cover"
-            />
-            <div
-              class="poster-info absolute inset-0 p-4 flex flex-col justify-end"
-            >
+            <img src="{{ anime.images.jpg.image_url }}" alt="{{ anime.title }}" class="w-full h-auto object-cover" />
+            <div class="poster-info absolute inset-0 p-4 flex flex-col justify-end">
               <div class="flex items-center mb-1">
-                <div
-                  class="w-4 h-4 flex items-center justify-center text-yellow-400 mr-1"
-                >
+                <div class="w-4 h-4 flex items-center justify-center text-yellow-400 mr-1">
                   <i class="ri-star-fill ri-sm"></i>
                 </div>
                 <span class="text-sm">{{ anime.score|default:"—" }}</span>
               </div>
               <h3 class="text-lg font-semibold">{{ anime.title }}</h3>
-              <p class="text-sm text-gray-300">
-                {{ anime.year|default:"Inconnu" }} | {{ anime.type }}
-              </p>
+              <p class="text-sm text-gray-300">{{ anime.year|default:"Inconnu" }} | {{ anime.type }}</p>
             </div>
           </div>
           <div class="p-3">
             <h3 class="font-medium truncate">{{ anime.title }}</h3>
             <p class="text-sm text-gray-400 truncate">
-              {% if anime.genres %} {{ anime.genres.0.name }} {% else %} Genre
-              inconnu {% endif %}
+              {% if anime.genres %} {{ anime.genres.0.name }} {% else %} Genre inconnu {% endif %}
             </p>
           </div>
         </div>
-        {% endfor %}
-      </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="py-16 px-6 gradient-bg">
-      <div class="container mx-auto">
-        <h2 class="text-2xl md:text-3xl font-bold text-center mb-12">
-          Pourquoi choisir Nikki ?
-        </h2>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div class="text-center p-6">
-            <div
-              class="w-16 h-16 mx-auto mb-4 flex items-center justify-center bg-primary bg-opacity-20 rounded-full"
-            >
-              <i class="ri-calendar-check-line ri-xl text-primary"></i>
-            </div>
-            <h3 class="text-xl font-semibold mb-3">Suivi personnalisé</h3>
-            <p class="text-gray-300">
-              Gardez une trace de tous vos animes préférés en un seul endroit.
-            </p>
-          </div>
-
-          <div class="text-center p-6">
-            <div
-              class="w-16 h-16 mx-auto mb-4 flex items-center justify-center bg-primary bg-opacity-20 rounded-full"
-            >
-              <i class="ri-notification-line ri-xl text-primary"></i>
-            </div>
-            <h3 class="text-xl font-semibold mb-3">Notifications</h3>
-            <p class="text-gray-300">
-              Soyez alerté des nouvelles sorties ou épisodes à venir.
-            </p>
-          </div>
-
-          <div class="text-center p-6">
-            <div
-              class="w-16 h-16 mx-auto mb-4 flex items-center justify-center bg-primary bg-opacity-20 rounded-full"
-            >
-              <i class="ri-group-line ri-xl text-primary"></i>
-            </div>
-            <h3 class="text-xl font-semibold mb-3">Communauté</h3>
-            <p class="text-gray-300">
-              Découvrez les animes les plus aimés par d'autres fans.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- CTA Section -->
-    <section
-      class="py-20 px-6"
-      style="
-        background-image: url('{% static "images/cta.png" %}');
-        background-size: cover;
-        background-position: center;
-      "
-    >
-      <div class="container mx-auto text-center">
-        <h2 class="text-3xl md:text-4xl font-bold mb-6">
-          Prêt à commencer votre aventure ?
-        </h2>
-        <p class="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-          Rejoignez des milliers d'utilisateurs qui organisent déjà leur
-          expérience de visionnage avec Nikki.
-        </p>
-        <button
-          class="px-8 py-3 bg-primary hover:bg-opacity-90 text-white font-medium !rounded-button whitespace-nowrap"
-        >
-          Créer un compte gratuitement
-        </button>
-      </div>
-    </section>
-
-    <!-- Login Modal -->
-    <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center hidden modal">
-        <div class="absolute inset-0 bg-black bg-opacity-50" id="loginModalOverlay"></div>
-        <div class="bg-[#252530] rounded-lg w-full max-w-md p-6 z-10 relative">
-            <button id="closeLoginModal" class="absolute top-4 right-4 text-gray-400 hover:text-white">
-                <div class="w-6 h-6 flex items-center justify-center">
-                    <i class="ri-close-line ri-lg"></i>
-                </div>
-            </button>
-            
-            <h2 class="text-2xl font-bold mb-6">Connexion</h2>
-            
-            <form>
-                <div class="mb-4">
-                    <label for="loginEmail" class="block text-sm font-medium text-gray-300 mb-2">Email</label>
-                    <input type="email" id="loginEmail" class="w-full px-4 py-3 bg-[#1f1f1f] border-none rounded focus:ring-2 focus:ring-primary text-white" placeholder="votre@email.com" required>
-                </div>
-                
-                <div class="mb-6">
-                    <label for="loginPassword" class="block text-sm font-medium text-gray-300 mb-2">Mot de passe</label>
-                    <input type="password" id="loginPassword" class="w-full px-4 py-3 bg-[#1f1f1f] border-none rounded focus:ring-2 focus:ring-primary text-white" placeholder="••••••••" required>
-                </div>
-                
-                <div class="flex items-center justify-between mb-6">
-                    <div class="flex items-center">
-                        <input type="checkbox" id="rememberMe" class="custom-checkbox mr-2">
-                        <label for="rememberMe" class="text-sm text-gray-300">Se souvenir de moi</label>
-                    </div>
-                    <a href="#" class="text-sm text-primary hover:underline">Mot de passe oublié ?</a>
-                </div>
-                
-                <button type="submit" class="w-full py-3 bg-primary hover:bg-opacity-90 text-white font-medium !rounded-button whitespace-nowrap">Se connecter</button>
-            </form>
-            
-            <div class="mt-6 text-center">
-                <p class="text-gray-400">Pas encore de compte ? <a href="#" id="switchToSignup" class="text-primary hover:underline">S'inscrire</a></p>
-            </div>
-        </div>
+      {% endfor %}
     </div>
+  </section>
 
-    <!-- Signup Modal -->
-    <div id="signupModal" class="fixed inset-0 z-50 flex items-center justify-center hidden modal">
-        <div class="absolute inset-0 bg-black bg-opacity-50" id="signupModalOverlay"></div>
-        <div class="bg-[#252530] rounded-lg w-full max-w-md p-6 z-10 relative">
-            <button id="closeSignupModal" class="absolute top-4 right-4 text-gray-400 hover:text-white">
-                <div class="w-6 h-6 flex items-center justify-center">
-                    <i class="ri-close-line ri-lg"></i>
-                </div>
-            </button>
-            
-            <h2 class="text-2xl font-bold mb-6">Inscription</h2>
-            
-            <form>
-                <div class="mb-4">
-                    <label for="signupName" class="block text-sm font-medium text-gray-300 mb-2">Nom complet</label>
-                    <input type="text" id="signupName" class="w-full px-4 py-3 bg-[#1f1f1f] border-none rounded focus:ring-2 focus:ring-primary text-white" placeholder="Jean Dupont" required>
-                </div>
-                
-                <div class="mb-4">
-                    <label for="signupEmail" class="block text-sm font-medium text-gray-300 mb-2">Email</label>
-                    <input type="email" id="signupEmail" class="w-full px-4 py-3 bg-[#1f1f1f] border-none rounded focus:ring-2 focus:ring-primary text-white" placeholder="votre@email.com" required>
-                </div>
-                
-                <div class="mb-4">
-                    <label for="signupPassword" class="block text-sm font-medium text-gray-300 mb-2">Mot de passe</label>
-                    <input type="password" id="signupPassword" class="w-full px-4 py-3 bg-[#1f1f1f] border-none rounded focus:ring-2 focus:ring-primary text-white" placeholder="••••••••" required>
-                </div>
-                
-                <div class="mb-6">
-                    <label for="signupPasswordConfirm" class="block text-sm font-medium text-gray-300 mb-2">Confirmer le mot de passe</label>
-                    <input type="password" id="signupPasswordConfirm" class="w-full px-4 py-3 bg-[#1f1f1f] border-none rounded focus:ring-2 focus:ring-primary text-white" placeholder="••••••••" required>
-                </div>
-                
-                <div class="flex items-center mb-6">
-                    <input type="checkbox" id="termsAgree" class="custom-checkbox mr-2" required>
-                    <label for="termsAgree" class="text-sm text-gray-300">J'accepte les <a href="#" class="text-primary hover:underline">conditions d'utilisation</a> et la <a href="#" class="text-primary hover:underline">politique de confidentialité</a></label>
-                </div>
-                
-                <button type="submit" class="w-full py-3 bg-primary hover:bg-opacity-90 text-white font-medium !rounded-button whitespace-nowrap">Créer un compte</button>
-            </form>
-            
-            <div class="mt-6 text-center">
-                <p class="text-gray-400">Déjà inscrit ? <a href="#" id="switchToLogin" class="text-primary hover:underline">Se connecter</a></p>
-            </div>
+  <!-- Pourquoi Nikki -->
+  <section class="py-16 px-6 gradient-bg">
+    <div class="container mx-auto">
+      <h2 class="text-2xl md:text-3xl font-bold text-center mb-12">Pourquoi choisir Nikki ?</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="text-center p-6">
+          <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center bg-primary bg-opacity-20 rounded-full">
+            <i class="ri-calendar-check-line ri-xl text-primary"></i>
+          </div>
+          <h3 class="text-xl font-semibold mb-3">Suivi personnalisé</h3>
+          <p class="text-gray-300">Gardez une trace de tous vos animes préférés en un seul endroit.</p>
         </div>
-    </div>
-
-    <!-- JS pour modaux -->
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const loginModal = document.getElementById("loginModal");
-        const signupModal = document.getElementById("signupModal");
-        const loginBtn = document.getElementById("loginBtn");
-        const signupBtn = document.getElementById("signupBtn");
-        const closeLoginModal = document.getElementById("closeLoginModal");
-        const closeSignupModal = document.getElementById("closeSignupModal");
-        const loginOverlay = document.getElementById("loginModalOverlay");
-        const signupOverlay = document.getElementById("signupModalOverlay");
-
-        const switchToLogin = document.getElementById("switchToLogin");
-        const switchToSignup = document.getElementById("switchToSignup");
-        const startNow = document.getElementById("startNow");
-        if (switchToLogin) {
-            switchToLogin.addEventListener("click", (e) => {
-            e.preventDefault();
-            signupModal.classList.add("hidden");
-            loginModal.classList.remove("hidden");
-            });
-        }
-
-        if (switchToSignup) {
-            switchToSignup.addEventListener("click", (e) => {
-                e.preventDefault();
-                loginModal.classList.add("hidden");
-                signupModal.classList.remove("hidden");
-            });
-        }
-
-        if (startNow) {
-            startNow.addEventListener("click", (e) => {
-                e.preventDefault();
-                signupModal.classList.remove("hidden");
-                document.body.style.overflow = "hidden";
-            });
-        }
-        loginBtn.onclick = () => loginModal.classList.remove("hidden");
-        signupBtn.onclick = () => signupModal.classList.remove("hidden");
-        closeLoginModal.onclick = () => loginModal.classList.add("hidden");
-        closeSignupModal.onclick = () => signupModal.classList.add("hidden");
-        loginOverlay.onclick = () => loginModal.classList.add("hidden");
-        signupOverlay.onclick = () => signupModal.classList.add("hidden");
-      });
-
-    </script>
-    <!-- Footer enrichi sans la colonne "Catégories" -->
-    <footer class="py-12 px-6 bg-[#1a1a1a]">
-      <div class="container mx-auto">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-          <div>
-            <a
-              href="#"
-              class="text-2xl font-['Pacifico'] text-white mb-4 inline-block"
-            >
-              <span class="text-primary">Nikki</span>
-            </a>
-            <p class="text-gray-400 mb-4">
-              Votre plateforme de suivi d’animes préférés.
-            </p>
-            <div class="flex space-x-4">
-              <a href="#" class="text-gray-400 hover:text-primary">
-                <div class="w-8 h-8 flex items-center justify-center">
-                  <i class="ri-facebook-fill"></i>
-                </div>
-              </a>
-              <a href="#" class="text-gray-400 hover:text-primary">
-                <div class="w-8 h-8 flex items-center justify-center">
-                  <i class="ri-twitter-x-fill"></i>
-                </div>
-              </a>
-              <a href="#" class="text-gray-400 hover:text-primary">
-                <div class="w-8 h-8 flex items-center justify-center">
-                  <i class="ri-instagram-fill"></i>
-                </div>
-              </a>
-            </div>
+        <div class="text-center p-6">
+          <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center bg-primary bg-opacity-20 rounded-full">
+            <i class="ri-notification-line ri-xl text-primary"></i>
           </div>
-
-          <div>
-            <h3 class="text-lg font-semibold mb-4">Navigation</h3>
-            <ul class="space-y-2">
-              <li>
-                <a href="#" class="text-gray-400 hover:text-primary">Accueil</a>
-              </li>
-              <li>
-                <a href="#" class="text-gray-400 hover:text-primary">Animes</a>
-              </li>
-              <li>
-                <a href="#" class="text-gray-400 hover:text-primary">Genres</a>
-              </li>
-              <li>
-                <a href="#" class="text-gray-400 hover:text-primary"
-                  >Mon Profil</a
-                >
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 class="text-lg font-semibold mb-4">Aide & Support</h3>
-            <ul class="space-y-2">
-              <li>
-                <a href="#" class="text-gray-400 hover:text-primary">FAQ</a>
-              </li>
-              <li>
-                <a href="#" class="text-gray-400 hover:text-primary">Contact</a>
-              </li>
-              <li>
-                <a href="#" class="text-gray-400 hover:text-primary"
-                  >Conditions d'utilisation</a
-                >
-              </li>
-              <li>
-                <a href="#" class="text-gray-400 hover:text-primary"
-                  >Politique de confidentialité</a
-                >
-              </li>
-            </ul>
-          </div>
+          <h3 class="text-xl font-semibold mb-3">Notifications</h3>
+          <p class="text-gray-300">Soyez alerté des nouvelles sorties ou épisodes à venir.</p>
         </div>
-
-        <div class="pt-8 border-t border-gray-800 text-center text-gray-500">
-          <p>&copy; 2025 Nikki. Tous droits réservés.</p>
+        <div class="text-center p-6">
+          <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center bg-primary bg-opacity-20 rounded-full">
+            <i class="ri-group-line ri-xl text-primary"></i>
+          </div>
+          <h3 class="text-xl font-semibold mb-3">Communauté</h3>
+          <p class="text-gray-300">Découvrez les animes les plus aimés par d'autres fans.</p>
         </div>
       </div>
-    </footer>
-  </body>
-</html>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-20 px-6" style="background-image: url('{% static "images/cta.png" %}'); background-size: cover; background-position: center;">
+    <div class="container mx-auto text-center">
+      <h2 class="text-3xl md:text-4xl font-bold mb-6">Prêt à commencer votre aventure ?</h2>
+      <p class="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+        Rejoignez des milliers d'utilisateurs qui organisent déjà leur expérience de visionnage avec Nikki.
+      </p>
+      <button class="px-8 py-3 bg-primary hover:bg-opacity-90 text-white font-medium !rounded-button whitespace-nowrap">
+        Créer un compte gratuitement
+      </button>
+    </div>
+  </section>
+{% endblock %}
