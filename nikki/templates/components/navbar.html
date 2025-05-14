@@ -11,13 +11,20 @@
 
     <div class="relative group">
       <a href="#" class="nav-link text-gray-300 hover:text-primary transition-colors">Genres</a>
-      <ul class="absolute hidden group-hover:block bg-[#1f1f1f] text-sm mt-2 rounded shadow-lg z-50 min-w-[160px]">
-        {% for genre in anime_genres %}
-          <li><a href="#" class="block px-4 py-2 text-white hover:bg-primary/20">{{ genre.name }}</a></li>
-        {% empty %}
-          <li class="px-4 py-2 text-gray-400 italic">Genres non disponibles</li>
-        {% endfor %}
-      </ul>
+
+      <div class="absolute left-0 mt-2 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 bg-[#1f1f1f] text-sm rounded shadow-lg z-50 min-w-[160px] max-h-72 overflow-y-auto">
+        <ul>
+          {% for genre in anime_genres %}
+            <li>
+              <a href="{% url 'genre_animes' genre.mal_id %}" class="block px-4 py-2 text-white hover:bg-primary/20">
+                {{ genre.name }}
+              </a>
+            </li>
+          {% empty %}
+            <li class="px-4 py-2 text-gray-400 italic">Genres non disponibles</li>
+          {% endfor %}
+        </ul>
+      </div>
     </div>
   </div>
 
