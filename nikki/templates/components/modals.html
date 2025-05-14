@@ -59,12 +59,58 @@
       </div>
       <div class="flex items-center mb-6">
         <input type="checkbox" id="termsAgree" class="custom-checkbox mr-2" required>
-        <label for="termsAgree" class="text-sm text-gray-300">J'accepte les <a href="#" class="text-primary hover:underline">conditions d'utilisation</a> et la <a href="#" class="text-primary hover:underline">politique de confidentialité</a></label>
+        <label for="termsAgree" class="text-sm text-gray-300">
+            J'accepte les
+            <a href="#" id="showTermsModal" class="text-primary hover:underline">conditions d'utilisation</a>
+            et la
+            <a href="#" id="showPrivacyModal" class="text-primary hover:underline">politique de confidentialité</a>
+        </label>
+
       </div>
       <button type="submit" class="w-full py-3 bg-primary hover:bg-opacity-90 text-white font-medium !rounded-button whitespace-nowrap">Créer un compte</button>
     </form>
     <div class="mt-6 text-center">
       <p class="text-gray-400">Déjà inscrit ? <a href="#" id="switchToLogin" class="text-primary hover:underline">Se connecter</a></p>
     </div>
+  </div>
+</div>
+
+<!-- Terms Modal -->
+<div id="termsModal" class="fixed inset-0 z-50 flex items-center justify-center hidden modal">
+  <div class="absolute inset-0 bg-black bg-opacity-50" id="termsModalOverlay"></div>
+  <div class="bg-[#252530] text-white rounded-lg w-full max-w-2xl p-6 z-10 relative max-h-[90vh] overflow-y-auto">
+    <button id="closeTermsModal" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+      <i class="ri-close-line ri-lg"></i>
+    </button>
+    <h2 class="text-2xl font-bold mb-4">Conditions d’utilisation</h2>
+    <p class="mb-4">
+      En utilisant Nikki, vous acceptez les conditions suivantes. L'application vous permet de suivre vos animes préférés, mais ne garantit pas l’exactitude permanente des données fournies.
+    </p>
+    <p class="mb-4">
+      Vous vous engagez à utiliser Nikki de manière personnelle et non commerciale. Toute tentative de détournement, scraping ou copie de données est strictement interdite.
+    </p>
+    <p class="mb-4">
+      Nikki se réserve le droit de modifier les présentes conditions à tout moment. Nous vous recommandons de les consulter régulièrement.
+    </p>
+  </div>
+</div>
+
+<!-- Privacy Modal -->
+<div id="privacyModal" class="fixed inset-0 z-50 flex items-center justify-center hidden modal">
+  <div class="absolute inset-0 bg-black bg-opacity-50" id="privacyModalOverlay"></div>
+  <div class="bg-[#252530] text-white rounded-lg w-full max-w-2xl p-6 z-10 relative max-h-[90vh] overflow-y-auto">
+    <button id="closePrivacyModal" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+      <i class="ri-close-line ri-lg"></i>
+    </button>
+    <h2 class="text-2xl font-bold mb-4">Politique de confidentialité</h2>
+    <p class="mb-4">
+      Nikki respecte votre vie privée. Les données que vous nous fournissez (email, nom d’utilisateur) ne sont ni vendues ni partagées avec des tiers.
+    </p>
+    <p class="mb-4">
+      Nous collectons des informations pour améliorer votre expérience utilisateur. Vous pouvez demander la suppression de vos données personnelles à tout moment.
+    </p>
+    <p class="mb-4">
+      Notre site peut contenir des liens vers des plateformes externes. Nous ne sommes pas responsables de leur politique de confidentialité.
+    </p>
   </div>
 </div>
