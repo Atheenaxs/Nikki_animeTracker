@@ -16,7 +16,7 @@
         <ul>
           {% for genre in anime_genres %}
             <li>
-              <a href="{% url 'genre_animes' genre.mal_id %}" class="block px-4 py-2 text-white hover:bg-primary/20">
+              <a href="{% url 'genre_animes' genre.slug %}" class="block px-4 py-2 text-white hover:bg-primary/20">
                 {{ genre.name }}
               </a>
             </li>
