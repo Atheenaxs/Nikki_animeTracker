@@ -60,4 +60,4 @@ jobs:
         sleep 5
 
     - name: Run Playwright E2E tests
-      run: pytest tests/e2e/ --browser chromium
+      run: pytest nikki/tests/e2e/ --browser chromium
