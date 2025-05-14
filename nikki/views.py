@@ -22,10 +22,19 @@ def terms(request):
 def privacy(request):
     return render(request, "legal/privacy.html")
 
-def genre_animes(request, mal_id):
-    animes = requests.get(f"https://api.jikan.moe/v4/anime?genres={mal_id}&order_by=popularity").json().get("data", [])
-    anime_genres = get_anime_genres()
+def genre_animes(request, slug):
+    all_genres = get_anime_genres()
+    genre = next((g for g in all_genres if g['slug'] == slug), None)
+
+    if not genre:
+        return render(request, "animes/genre_not_found.html", status=404)
+
+    mal_id = genre["mal_id"]
+    response = requests.get(f"https://api.jikan.moe/v4/anime?genres={mal_id}&order_by=popularity")
+    animes = response.json().get("data", [])
+
     return render(request, "animes/by_genre.html", {
+        "genre": genre,
         "animes": animes,
-        "anime_genres": anime_genres,
+        "anime_genres": all_genres,
     })
