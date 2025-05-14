@@ -42,3 +42,45 @@ document.addEventListener("DOMContentLoaded", () => {
   loginOverlay.onclick = () => loginModal.classList.add("hidden");
   signupOverlay.onclick = () => signupModal.classList.add("hidden");
 });
+
+// Modales légales
+const termsModal = document.getElementById("termsModal");
+const privacyModal = document.getElementById("privacyModal");
+const showTermsModal = document.getElementById("showTermsModal");
+const showPrivacyModal = document.getElementById("showPrivacyModal");
+const closeTermsModal = document.getElementById("closeTermsModal");
+const closePrivacyModal = document.getElementById("closePrivacyModal");
+const termsOverlay = document.getElementById("termsModalOverlay");
+const privacyOverlay = document.getElementById("privacyModalOverlay");
+
+if (showTermsModal && termsModal) {
+  showTermsModal.onclick = (e) => {
+    e.preventDefault();
+    termsModal.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+  };
+  closeTermsModal.onclick = () => {
+    termsModal.classList.add("hidden");
+    document.body.style.overflow = "auto";
+  };
+  termsOverlay.onclick = () => {
+    termsModal.classList.add("hidden");
+    document.body.style.overflow = "auto";
+  };
+}
+
+if (showPrivacyModal && privacyModal) {
+  showPrivacyModal.onclick = (e) => {
+    e.preventDefault();
+    privacyModal.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+  };
+  closePrivacyModal.onclick = () => {
+    privacyModal.classList.add("hidden");
+    document.body.style.overflow = "auto";
+  };
+  privacyOverlay.onclick = () => {
+    privacyModal.classList.add("hidden");
+    document.body.style.overflow = "auto";
+  };
+}

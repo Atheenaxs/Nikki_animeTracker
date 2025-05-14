@@ -21,4 +21,6 @@ from nikki import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
+    path("conditions-utilisation/", views.terms, name="terms"),
+    path("politique-confidentialite/", views.privacy, name="privacy"),
 ]

@@ -10,3 +10,9 @@ def home(request):
         top_animes = data.get("data", [])[:10]  # on prend les 10 premiers
 
     return render(request, "animes/home.html", {"top_animes": top_animes})
+
+def terms(request):
+    return render(request, "legal/terms.html")
+
+def privacy(request):
+    return render(request, "legal/privacy.html")
