@@ -38,3 +38,9 @@ def genre_animes(request, slug):
         "animes": animes,
         "anime_genres": all_genres,
     })
+
+def all_genres(request):
+    genres = get_anime_genres()
+    return render(request, "animes/all_genres.html", {
+        "anime_genres": genres
+    })
