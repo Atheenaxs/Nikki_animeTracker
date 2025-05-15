@@ -38,3 +38,20 @@ def genre_animes(request, slug):
         "animes": animes,
         "anime_genres": all_genres,
     })
+
+def animes_view(request):
+    query = request.GET.get("q", "")
+    anime_genres = get_anime_genres()
+
+    if query:
+        response = requests.get(f"https://api.jikan.moe/v4/anime?q={query}&order_by=popularity")
+    else:
+        response = requests.get("https://api.jikan.moe/v4/top/anime?limit=25")
+
+    animes = response.json().get("data", [])
+
+    return render(request, "animes/animes.html", {
+        "animes": animes,
+        "query": query,
+        "anime_genres": anime_genres,
+    })
