@@ -54,4 +54,8 @@ def animes_view(request):
         "animes": animes,
         "query": query,
         "anime_genres": anime_genres,
+def all_genres(request):
+    genres = get_anime_genres()
+    return render(request, "animes/all_genres.html", {
+        "anime_genres": genres
     })

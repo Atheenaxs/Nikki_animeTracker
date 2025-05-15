@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="bg-cover bg-center" style="background-image: url('{% static "images/genres.png" %}')">
+    <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-black/90 to-transparent z-10"></div>
+
+  <section class="py-16 px-6 bg-black/70 min-h-screen">
+    <h2 class="text-3xl font-bold text-center mt-6 mb-10 text-white">Tous les genres d’animes</h2>
+
+    <div class="max-w-4xl mx-auto">
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        {% for genre in anime_genres %}
+          <a href="{% url 'genre_animes' genre.slug %}"
+             class="block py-3 px-4 bg-[#252530] rounded text-center text-white hover:bg-primary/20 transition">
+            {{ genre.name }}
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

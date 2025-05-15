@@ -1,4 +1,4 @@
-<nav class="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex items-center justify-between bg-opacity-80 bg-[#1f1f1f] backdrop-blur-md">
+<nav class="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex items-center justify-between bg-black/50 backdrop-blur-md text-white">
   <div class="flex items-center">
     <a href="/" class="text-2xl font-['Pacifico'] text-white flex items-center">
       <span class="text-primary">Nikki</span>
@@ -10,7 +10,9 @@
     <a href="{% url 'animes' %}" class="nav-link text-gray-300 hover:text-primary transition-colors">Animes</a>
 
     <div class="relative group">
-      <a href="#" class="nav-link text-gray-300 hover:text-primary transition-colors" data-testid="nav-genres">Genres</a>
+      <a href="{% url 'all_genres' %}" class="text-white px-4 py-2 block cursor-pointer" data-testid="nav-genres">
+        Genres
+      </a>
 
       <div class="absolute left-0 mt-2 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 bg-[#1f1f1f] text-sm rounded shadow-lg z-50 min-w-[160px] max-h-72 overflow-y-auto">
         <ul>
