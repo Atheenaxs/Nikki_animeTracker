@@ -1,7 +1,53 @@
 import requests
 from django.shortcuts import render
 from nikki.utils import get_anime_genres
+import jwt
+import datetime
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.http import JsonResponse
+from django.contrib.auth.hashers import make_password
+from django.views.decorators.csrf import csrf_exempt
+import json
 
+User = get_user_model()
+
+@csrf_exempt
+def signup(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Méthode non autorisée"}, status=405)
+
+    try:
+        data = json.loads(request.body)
+
+        username = data.get("username")
+        email = data.get("email")
+        password = data.get("password")
+        avatar = data.get("avatar", "")
+
+        if not all([username, email, password]):
+            return JsonResponse({"error": "Champs requis manquants"}, status=400)
+
+        User = get_user_model()
+
+        if User.objects.filter(username=username).exists():
+            return JsonResponse({"error": "Nom d'utilisateur déjà pris"}, status=409)
+
+        user = User.objects.create(
+            username=username,
+            email=email,
+            password=make_password(password),
+            avatar=avatar
+        )
+
+        token = jwt.encode({"user_id": user.id}, settings.SECRET_KEY, algorithm="HS256")
+
+        return JsonResponse({"message": "Inscription réussie", "token": token}, status=201)
+
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Données JSON invalides"}, status=400)
+
+## front
 def home(request):
     response = requests.get("https://api.jikan.moe/v4/top/anime")
     top_animes = []
