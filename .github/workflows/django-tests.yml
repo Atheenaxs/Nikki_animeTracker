@@ -6,6 +6,7 @@ on:
 
 jobs:
   test:
+    name: Django Tests
     runs-on: ubuntu-latest
 
     services:
