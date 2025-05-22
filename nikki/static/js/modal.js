@@ -76,10 +76,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const data = await response.json();
 
-        if (response.ok) {
-          alert("Inscription réussie !");
-          signupForm.reset();
-          signupModal.classList.add("hidden");
+        if (response.ok && data.success) {
+          // Recharger la page pour afficher "Profil" dans la navbar
+          location.reload();
         } else {
           alert(data.error || "Erreur lors de l'inscription.");
         }
@@ -90,6 +89,40 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+const loginForm = document.getElementById("loginForm");
+
+if (loginForm) {
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value;
+
+    try {
+      const response = await fetch("/login/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCookie("csrftoken"),
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Connexion réussie → recharge la page
+        location.reload();
+      } else {
+        alert(data.error || "Erreur lors de la connexion.");
+      }
+    } catch (err) {
+      console.error("Erreur réseau :", err);
+      alert("Une erreur est survenue. Réessayez plus tard.");
+    }
+  });
+}
 
 // CSRF pour Django
 function getCookie(name) {
