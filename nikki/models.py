@@ -3,11 +3,14 @@ from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 class User(AbstractUser):
-    avatar = models.URLField(blank=True, null=True)
+    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+    email = models.EmailField(unique=True)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username'] 
 
     def __str__(self):
-        return self.username
-
+        return self.email
 
 class Anime(models.Model):
     title = models.CharField(max_length=255)

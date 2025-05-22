@@ -1,16 +1,39 @@
 import requests
-from django.shortcuts import render
-from nikki.utils import get_anime_genres
-import jwt
-import datetime
+import json
+from django.shortcuts import render, redirect
 from django.conf import settings
-from django.contrib.auth import get_user_model
-from django.http import JsonResponse
+from django.contrib.auth import get_user_model, authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
 from django.views.decorators.csrf import csrf_exempt
-import json
+from django.http import JsonResponse
+
+from nikki.utils import get_anime_genres
 
 User = get_user_model()
+
+# --- AUTHENTIFICATION ---
+
+@csrf_exempt
+def login_view(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Méthode non autorisée"}, status=405)
+
+    try:
+        data = json.loads(request.body)
+        email = data.get("email")
+        password = data.get("password")
+
+        user = authenticate(request, email=email, password=password)
+
+        if user is not None:
+            login(request, user)
+            return JsonResponse({"success": True})
+        else:
+            return JsonResponse({"error": "Identifiants invalides"}, status=401)
+
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Données JSON invalides"}, status=400)
 
 @csrf_exempt
 def signup(request):
@@ -28,8 +51,6 @@ def signup(request):
         if not all([username, email, password]):
             return JsonResponse({"error": "Champs requis manquants"}, status=400)
 
-        User = get_user_model()
-
         if User.objects.filter(username=username).exists():
             return JsonResponse({"error": "Nom d'utilisateur déjà pris"}, status=409)
 
@@ -40,21 +61,25 @@ def signup(request):
             avatar=avatar
         )
 
-        token = jwt.encode({"user_id": user.id}, settings.SECRET_KEY, algorithm="HS256")
-
-        return JsonResponse({"message": "Inscription réussie", "token": token}, status=201)
+        login(request, user)
+        return JsonResponse({"success": True})
 
     except json.JSONDecodeError:
         return JsonResponse({"error": "Données JSON invalides"}, status=400)
 
-## front
+def logout_view(request):
+    logout(request)
+    return redirect("home")
+
+# --- FRONT ---
+
 def home(request):
     response = requests.get("https://api.jikan.moe/v4/top/anime")
     top_animes = []
 
     if response.status_code == 200:
         data = response.json()
-        top_animes = data.get("data", [])[:10]  # on prend les 10 premiers
+        top_animes = data.get("data", [])[:10]
 
     anime_genres = get_anime_genres()
     return render(request, "animes/home.html", {
@@ -107,3 +132,7 @@ def all_genres(request):
     return render(request, "animes/all_genres.html", {
         "anime_genres": genres
     })
+
+@login_required
+def profile_view(request):
+    return render(request, "users/profile.html", {"user": request.user})

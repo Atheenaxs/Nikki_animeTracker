@@ -6,11 +6,12 @@
   </div>
 
   <div class="hidden md:flex items-center space-x-8">
-    <a href="/" class="nav-link active text-white hover:text-primary transition-colors">Accueil</a>
-    <a href="{% url 'animes' %}" class="nav-link text-gray-300 hover:text-primary transition-colors">Animes</a>
+    <a href="/" class="nav-link transition-colors {% if request.path == '/' %}text-primary font-semibold{% else %}text-white hover:text-primary{% endif %}">Accueil</a>
+
+    <a href="{% url 'animes' %}" class="nav-link transition-colors {% if request.path == '/animes/' %}text-primary font-semibold{% else %}text-white hover:text-primary{% endif %}">Animes</a>
 
     <div class="relative group">
-      <a href="{% url 'all_genres' %}" class="text-white px-4 py-2 block cursor-pointer" data-testid="nav-genres">
+      <a href="{% url 'all_genres' %}" class="text-white px-4 py-2 block cursor-pointer hover:text-primary transition-colors" data-testid="nav-genres">
         Genres
       </a>
 
@@ -31,10 +32,20 @@
   </div>
 
   <div class="flex items-center space-x-4">
-    <a href="#" class="hidden md:block text-gray-300 hover:text-primary transition-colors">
-      <div class="w-8 h-8 flex items-center justify-center"><i class="ri-user-line ri-lg"></i></div>
-    </a>
-    <button id="loginBtn" class="px-4 py-2 text-white bg-transparent border border-primary hover:bg-primary transition-colors !rounded-button whitespace-nowrap">Connexion</button>
-    <button id="signupBtn" class="px-4 py-2 text-white bg-primary hover:bg-opacity-90 transition-colors !rounded-button whitespace-nowrap">Inscription</button>
+    {% if user.is_authenticated %}
+      <a href="{% url 'profil' %}" class="text-white hover:text-primary transition-colors">
+        <div class="w-8 h-8 flex items-center justify-center"><i class="ri-user-fill ri-lg"></i></div>
+        <span class="sr-only">Profil</span>
+      </a>
+      <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="text-gray-300 hover:text-red-500 transition-colors">
+          Déconnexion
+        </button>
+      </form>
+    {% else %}
+      <button id="loginBtn" class="px-4 py-2 text-white bg-transparent border border-primary hover:bg-primary transition-colors !rounded-button whitespace-nowrap">Connexion</button>
+      <button id="signupBtn" class="px-4 py-2 text-white bg-primary hover:bg-opacity-90 transition-colors !rounded-button whitespace-nowrap">Inscription</button>
+    {% endif %}
   </div>
 </nav>

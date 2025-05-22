@@ -35,6 +35,9 @@ ALLOWED_HOSTS = []
 # USER
 AUTH_USER_MODEL = 'nikki.User'
 
+# redirect
+LOGIN_REDIRECT_URL = '/'
+
 # Application definition
 
 INSTALLED_APPS = [
