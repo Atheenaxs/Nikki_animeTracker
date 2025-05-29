@@ -135,4 +135,35 @@ def all_genres(request):
 
 @login_required
 def profile_view(request):
-    return render(request, "users/profile.html", {"user": request.user})
+    if request.method == 'POST':
+        user = request.user
+        user.username = request.POST.get('username')
+        user.email = request.POST.get('email')
+        if request.FILES.get('avatar'):
+            user.avatar = request.FILES['avatar']
+        user.save()
+        return JsonResponse({'status': 'ok'})
+    return render(request, 'users/profile.html')
+
+@login_required
+def delete_data(request):
+    if request.method == 'POST':
+        user = request.user
+        user.email = ''
+        if user.avatar:
+            user.avatar.delete(save=False)
+        user.save()
+
+        # user.anime_notes.all().delete()
+        # user.watchlist.clear()
+
+        return JsonResponse({'status': 'ok'})
+    
+@login_required
+def delete_account(request):
+    if request.method == 'POST':
+        user = request.user
+        logout(request)
+        user.delete()
+        return JsonResponse({'status': 'deleted'})
+    
