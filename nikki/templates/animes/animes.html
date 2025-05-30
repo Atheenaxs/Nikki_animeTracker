@@ -14,7 +14,7 @@
   {% if animes %}
   <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
     {% for anime in animes %}
-      <div class="poster-card rounded-lg overflow-hidden bg-card text-left">
+      <div class="poster-card rounded-lg overflow-hidden bg-card text-left relative" data-anime-id="{{ anime.mal_id }}">
         <div class="relative">
           <img src="{{ anime.images.jpg.image_url }}" alt="{{ anime.title }}" class="w-full h-auto object-cover" />
           <div class="poster-info absolute inset-0 p-4 flex flex-col justify-end">
@@ -27,6 +27,16 @@
             <h3 class="text-lg font-semibold truncate">{{ anime.title }}</h3>
             <p class="text-sm text-gray-300 truncate">{{ anime.type }} | {{ anime.year|default:"—" }}</p>
           </div>
+        </div>
+
+        <!-- Bouton + -->
+        <button class="add-to-list-btn absolute top-2 right-2 bg-white text-black rounded-full px-2 py-1 text-lg font-bold shadow hover:bg-gray-200 z-10">+</button>
+
+        <!-- Menu déroulant -->
+        <div class="list-menu hidden absolute top-10 right-2 bg-white text-black rounded shadow z-20">
+          <button class="list-option block px-4 py-2 hover:bg-gray-100" data-status="toWatch">À voir</button>
+          <button class="list-option block px-4 py-2 hover:bg-gray-100" data-status="watching">En cours</button>
+          <button class="list-option block px-4 py-2 hover:bg-gray-100" data-status="finished">Terminé</button>
         </div>
       </div>
     {% endfor %}

@@ -20,4 +20,5 @@ urlpatterns = [
     path('changer-mot-de-passe/succes/', auth_views.PasswordChangeDoneView.as_view(template_name='users/succes_mdp.html'), name='password_change_done'),
     path('supprimer-compte/', views.delete_account, name='delete_account'),
     path('supprimer-donnees/', views.delete_data, name='delete_data'),
+    path('add-to-list/', views.add_anime_to_list, name='add_to_list'),
 ]
