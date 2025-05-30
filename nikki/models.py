@@ -13,6 +13,7 @@ class User(AbstractUser):
         return self.email
 
 class Anime(models.Model):
+    mal_id = models.IntegerField(unique=True)
     title = models.CharField(max_length=255)
     synopsis = models.TextField(blank=True)
     image_url = models.URLField(blank=True, null=True)

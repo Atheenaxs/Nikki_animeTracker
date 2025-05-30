@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from .models import Anime, UserAnime
 
 from nikki.utils import get_anime_genres
 
@@ -167,3 +169,37 @@ def delete_account(request):
         user.delete()
         return JsonResponse({'status': 'deleted'})
     
+# --ADD ANIME TO LIST--
+
+@require_POST
+@login_required
+def add_anime_to_list(request):
+    data = json.loads(request.body)
+
+    mal_id = data.get('anime_id')  # ID provenant de Jikan
+    status = data.get('status')
+    title = data.get('title')
+    image_url = data.get('image_url')
+
+    if not (mal_id and status and title):
+        return JsonResponse({'error': 'Données manquantes'}, status=400)
+
+    # Crée ou récupère l'anime dans la base
+    anime, created = Anime.objects.get_or_create(
+        mal_id=mal_id,
+        defaults={
+            'title': title,
+            'image_url': image_url,
+            'status': '',  # ou un champ par défaut
+            'release_date': None
+        }
+    )
+
+    # Crée ou met à jour la ligne UserAnime
+    ua, created_ua = UserAnime.objects.update_or_create(
+        user=request.user,
+        anime=anime,
+        defaults={'status': status}
+    )
+
+    return JsonResponse({'success': True, 'created': created_ua})
