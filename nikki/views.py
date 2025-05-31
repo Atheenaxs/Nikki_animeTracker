@@ -1,6 +1,6 @@
 import requests
 import json
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -145,7 +145,24 @@ def profile_view(request):
             user.avatar = request.FILES['avatar']
         user.save()
         return JsonResponse({'status': 'ok'})
-    return render(request, 'users/profile.html')
+
+    to_watch = UserAnime.objects.filter(user=request.user, status='toWatch').select_related('anime')
+    watching = UserAnime.objects.filter(user=request.user, status='watching').select_related('anime')
+    finished = UserAnime.objects.filter(user=request.user, status='finished').select_related('anime')
+
+    anime_lists = [
+        ("À voir plus tard", to_watch),
+        ("En cours", watching),
+        ("Terminés", finished),
+    ]
+
+    return render(request, 'users/profile.html', {
+        'anime_lists': anime_lists,
+        'to_watch': to_watch,
+        'watching': watching,
+        'finished': finished,
+    })
+
 
 @login_required
 def delete_data(request):
@@ -203,3 +220,31 @@ def add_anime_to_list(request):
     )
 
     return JsonResponse({'success': True, 'created': created_ua})
+
+@require_POST
+@login_required
+@csrf_exempt
+def change_anime_status_ajax(request):
+    import json
+    data = json.loads(request.body)
+    anime_id = data.get("user_anime_id")
+    new_status = data.get("new_status")
+
+    if new_status not in dict(UserAnime.STATUS_CHOICES):
+        return JsonResponse({"error": "Statut invalide"}, status=400)
+
+    ua = get_object_or_404(UserAnime, id=anime_id, user=request.user)
+    ua.status = new_status
+    ua.save()
+
+    return JsonResponse({"success": True})
+
+@require_POST
+@login_required
+def remove_anime(request, user_anime_id):
+    try:
+        user_anime = UserAnime.objects.get(id=user_anime_id, user=request.user)
+        user_anime.delete()
+        return JsonResponse({'success': True})
+    except UserAnime.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Not found'}, status=404)

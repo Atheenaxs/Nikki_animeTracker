@@ -21,4 +21,6 @@ urlpatterns = [
     path('supprimer-compte/', views.delete_account, name='delete_account'),
     path('supprimer-donnees/', views.delete_data, name='delete_data'),
     path('add-to-list/', views.add_anime_to_list, name='add_to_list'),
+    path('ajax/change-anime-status/', views.change_anime_status_ajax, name='change_anime_status_ajax'),
+    path('remove-anime/<int:user_anime_id>/', views.remove_anime, name='remove_anime')
 ]
