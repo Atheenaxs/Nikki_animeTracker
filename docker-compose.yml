@@ -24,6 +24,7 @@ services:
       - db
     env_file:
       - .env
+      - .env.test
 
 volumes:
   postgres_data:
