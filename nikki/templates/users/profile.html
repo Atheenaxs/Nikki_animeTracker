@@ -14,22 +14,22 @@
           <p class="text-gray-400 text-sm">Membre depuis {{ user.date_joined|date:"F Y" }}</p>
         </div>
       </div>
-      <button id="openSettings" class="btn btn-outline">Paramètres</button>
+        <button id="openSettings" class="btn btn-outline">Paramètres</button>
     </div>
 
     <!-- Statistiques -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
       <div class="bg-[#1f1f1f] rounded-lg p-6 text-center">
         <p class="text-sm text-gray-400 mb-2">Animes vus</p>
-        <p class="text-2xl font-bold">{{ finished|length }}</p>
+        <p class="text-2xl font-bold">0</p>
       </div>
       <div class="bg-[#1f1f1f] rounded-lg p-6 text-center">
         <p class="text-sm text-gray-400 mb-2">Heures visionnées</p>
-        <p class="text-2xl font-bold">0</p> <!-- À calculer plus tard -->
+        <p class="text-2xl font-bold">0</p>
       </div>
       <div class="bg-[#1f1f1f] rounded-lg p-6 text-center">
         <p class="text-sm text-gray-400 mb-2">À voir plus tard</p>
-        <p class="text-2xl font-bold">{{ to_watch|length }}</p>
+        <p class="text-2xl font-bold">0</p>
       </div>
     </div>
 
@@ -37,91 +37,158 @@
     <div>
       <h2 class="text-xl font-semibold mb-4">Mes animes</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {% for label, animes in anime_lists %}
         <div>
-          <h3 class="text-lg font-medium mb-2 text-primary">{{ label }}</h3>
-          {% if animes %}
-          <ul class="space-y-2">
-            {% for item in animes %}
-            <li class="bg-[#1f1f1f] rounded-lg px-3 py-1.5 relative flex gap-3 items-center shadow-sm hover:shadow-md transition">
-              <!-- Statut en haut à droite -->
-              <div class="absolute top-1.5 right-2 flex items-center gap-2">
-                <select class="anime-status-select bg-gray-800 text-white text-xs px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-primary"
-                        data-user-anime-id="{{ item.id }}">
-                  <option value="toWatch" {% if item.status == 'toWatch' %}selected{% endif %}>Plus tard</option>
-                  <option value="watching" {% if item.status == 'watching' %}selected{% endif %}>En cours</option>
-                  <option value="finished" {% if item.status == 'finished' %}selected{% endif %}>Terminé</option>
-                </select>
-                <button class="remove-anime-btn text-red-400 text-sm hover:text-red-600 transition"
-                        data-remove-url="{% url 'remove_anime' item.id %}">&#10005;</button>
-              </div>
-              <!-- Image anime -->
-              <img src="{{ item.anime.image_url }}" alt="{{ item.anime.title }}" class="w-12 h-16 object-cover rounded shadow" />
-              <!-- Titre -->
-              <div class="flex-1 mt-3 overflow-hidden pr-6">
-                <p class="text-white text-sm sm:text-base font-medium leading-snug truncate w-full whitespace-nowrap">{{ item.anime.title }}</p>
-              </div>
-            </li>
-            {% endfor %}
-          </ul>
-          {% else %}
+          <h3 class="text-lg font-medium mb-2 text-primary">À voir plus tard</h3>
           <div class="text-gray-400 text-sm italic">Aucun anime</div>
-          {% endif %}
         </div>
-        {% endfor %}
+        <div>
+          <h3 class="text-lg font-medium mb-2 text-primary">En cours</h3>
+          <div class="text-gray-400 text-sm italic">Aucun anime</div>
+        </div>
+        <div>
+          <h3 class="text-lg font-medium mb-2 text-primary">Terminés</h3>
+          <div class="text-gray-400 text-sm italic">Aucun anime</div>
+        </div>
       </div>
     </div>
   </div>
 </section>
+<div id="settingsPanel" class="fixed top-0 right-0 h-screen w-full sm:w-[500px] bg-[#1f1f1f] text-white shadow-lg z-50 transform translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto">
+  <div class="flex items-center justify-between px-6 py-4 border-b border-gray-700">
+    <h2 class="text-xl font-semibold">Paramètres</h2>
+    <button id="closeSettings" class="text-gray-400 hover:text-white">
+      <i class="ri-close-line text-2xl"></i>
+    </button>
+  </div>
 
+  <form id="profileForm" enctype="multipart/form-data" class="p-6 space-y-10">
+    {% csrf_token %}
+
+    <!-- Avatar -->
+    <div>
+      <h3 class="text-lg font-semibold mb-4">Photo de profil</h3>
+      <div class="flex items-center space-x-6">
+        <div class="relative w-24 h-24">
+          {% if user.avatar %}
+            <img src="{{ user.avatar.url }}" alt="Avatar" class="w-24 h-24 rounded-full border-2 border-primary object-cover">
+          {% else %}
+            <img src="https://api.dicebear.com/7.x/identicon/svg?seed={{ user.username }}" alt="Avatar par défaut" class="w-24 h-24 rounded-full border-2 border-primary object-cover">
+          {% endif %}
+          <label class="absolute bottom-0 right-0 bg-primary p-2 rounded-full cursor-pointer hover:scale-110 transition">
+            <i class="ri-camera-line text-white text-lg"></i>
+            <input type="file" name="avatar" class="hidden" />
+          </label>
+        </div>
+        <p class="text-gray-400 text-sm max-w-[200px] leading-snug">
+          Formats : JPG, PNG<br>Max : 5MB
+        </p>
+      </div>
+    </div>
+
+    <!-- Infos utilisateur -->
+    <div>
+      <h3 class="text-lg font-semibold mb-4">Informations du compte</h3>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">Pseudo</label>
+          <input type="text" name="username" value="{{ user.username }}" class="w-full px-4 py-3 bg-[#1f1f1f] border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-primary" />
+        </div>
+
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">Adresse email</label>
+          <input type="email" name="email" value="{{ user.email }}" class="w-full px-4 py-3 bg-[#1f1f1f] border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-primary" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="space-y-4">
+      <button type="submit" class="w-full py-3 bg-primary hover:bg-opacity-90 text-white font-semibold rounded-lg">Enregistrer</button>
+      <a href="{% url 'password_change' %}" class="block w-full py-3 border border-gray-600 text-center text-white hover:border-primary hover:text-primary rounded-lg">Modifier mon mot de passe</a>
+      <button type="button" id="deleteDataBtn" class="w-full py-3 bg-yellow-600 hover:bg-yellow-500 text-white font-semibold rounded-lg">Supprimer mes données personnelles</button>
+      <button type="button" id="deleteAccountBtn" class="w-full py-3 bg-red-600 hover:bg-red-500 text-white font-semibold rounded-lg">Supprimer définitivement mon compte</button>
+    </div>
+
+    <!-- Feedback -->
+    <div id="profileSuccess" class="text-green-500 hidden text-center pt-2">Modifications enregistrées</div>
+    <div id="profileError" class="text-red-500 hidden text-center pt-2">Erreur lors de l'enregistrement</div>
+  </form>
+</div>
+<script>
+  document.getElementById("openSettings").onclick = () => {
+    document.getElementById("settingsPanel").classList.remove("translate-x-full");
+  };
+  document.getElementById("closeSettings").onclick = () => {
+    document.getElementById("settingsPanel").classList.add("translate-x-full");
+  };
+</script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  const profileForm = document.getElementById("profileForm");
+  const successMsg = document.getElementById("profileSuccess");
+  const errorMsg = document.getElementById("profileError");
 
-  document.querySelectorAll(".anime-status-select").forEach(select => {
-    select.addEventListener("change", (e) => {
-      const newStatus = e.target.value;
-      const userAnimeId = e.target.dataset.userAnimeId;
+  // Update profile AJAX
+  profileForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-      fetch("{% url 'change_anime_status_ajax' %}", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": csrfToken
-        },
-        body: JSON.stringify({
-          user_anime_id: userAnimeId,
-          new_status: newStatus
-        })
-      }).then(res => res.json())
-        .then(data => {
-          if (data.success) {
-            location.reload();
-          } else {
-            alert("Erreur : " + (data.error || "inconnue"));
-          }
-        });
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const formData = new FormData(profileForm);
+
+    const response = await fetch("{% url 'profil' %}", {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": csrfToken,
+      },
+      body: formData,
     });
+
+    if (response.ok) {
+      successMsg.classList.remove("hidden");
+      errorMsg.classList.add("hidden");
+    } else {
+      successMsg.classList.add("hidden");
+      errorMsg.classList.remove("hidden");
+    }
   });
 
-  document.querySelectorAll(".remove-anime-btn").forEach(button => {
-    button.addEventListener("click", (e) => {
-      e.preventDefault();
-      const url = button.dataset.removeUrl;
+  // Supprimer mes données (RGPD)
+  document.getElementById("deleteDataBtn").addEventListener("click", async () => {
+    const confirmed = confirm("Supprimer toutes vos données personnelles ?");
+    if (!confirmed) return;
 
-      fetch(url, {
-        method: "POST",
-        headers: {
-          "X-CSRFToken": csrfToken
-        }
-      }).then(res => {
-        if (res.ok) {
-          location.reload();
-        } else {
-          alert("Erreur lors de la suppression.");
-        }
-      });
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const response = await fetch("{% url 'delete_data' %}", {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": csrfToken,
+      },
     });
+
+    if (response.ok) {
+      alert("Données supprimées.");
+      location.reload();
+    }
+  });
+
+  // Supprimer le compte
+  document.getElementById("deleteAccountBtn").addEventListener("click", async () => {
+    const confirmed = confirm("Êtes-vous sûr de vouloir supprimer votre compte ?");
+    if (!confirmed) return;
+
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const response = await fetch("{% url 'delete_account' %}", {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": csrfToken,
+      },
+    });
+
+    if (response.ok) {
+      alert("Compte supprimé. À bientôt...");
+      location.href = "{% url 'home' %}";
+    }
   });
 });
 </script>
