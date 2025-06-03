@@ -14,26 +14,35 @@ function getCookie(name) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.add-to-list-btn').forEach(button => {
-        button.addEventListener('mouseenter', () => {
-            const menu = button.nextElementSibling;
-            menu.classList.remove('hidden');
+  document.querySelectorAll('.add-to-list-btn').forEach(button => {
+    const isAuthenticated = button.dataset.authenticated === "true";
 
-            // Cacher le menu quand la souris sort
-            menu.addEventListener('mouseleave', () => {
-                menu.classList.add('hidden');
-            });
+    if (!isAuthenticated) {
+      button.addEventListener('click', () => {
+        window.location.href = "/login";
+      });
+      return; // ne met pas d'autres événements si non connecté
+    }
 
-            // Facultatif : fermer aussi si la souris sort du bouton
-            button.addEventListener('mouseleave', () => {
-                setTimeout(() => {
-                    if (!menu.matches(':hover')) {
-                        menu.classList.add('hidden');
-                    }
-                }, 150);
-            });
-        });
+    // Si connecté, gérer l'ouverture du menu au survol
+    const menu = button.nextElementSibling;
+
+    button.addEventListener('mouseenter', () => {
+      menu.classList.remove('hidden');
     });
+
+    button.addEventListener('mouseleave', () => {
+      setTimeout(() => {
+        if (!menu.matches(':hover')) {
+          menu.classList.add('hidden');
+        }
+      }, 150);
+    });
+
+    menu.addEventListener('mouseleave', () => {
+      menu.classList.add('hidden');
+    });
+  });
 
   document.querySelectorAll('.list-option').forEach(option => {
     option.addEventListener('click', () => {
@@ -50,10 +59,10 @@ document.addEventListener('DOMContentLoaded', () => {
           'X-CSRFToken': getCookie('csrftoken')
         },
         body: JSON.stringify({
-        anime_id: animeId,
-        title: title,
-        image_url: imageUrl,
-        status: status
+          anime_id: animeId,
+          title: title,
+          image_url: imageUrl,
+          status: status
         })
       })
       .then(response => response.json())
