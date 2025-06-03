@@ -72,3 +72,35 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.anime-status-select').forEach(select => {
+    select.addEventListener('change', () => {
+      const userAnimeId = select.dataset.userAnimeId;
+      const newStatus = select.value;
+
+      fetch('/ajax/change-anime-status/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+          user_anime_id: userAnimeId,
+          new_status: newStatus
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          location.reload();  // <-- Recharge la page automatiquement
+        } else {
+          alert("Erreur : " + (data.error || "inconnue"));
+        }
+      })
+      .catch(error => {
+        alert("Erreur réseau");
+        console.error(error);
+      });
+    });
+  });
+});
