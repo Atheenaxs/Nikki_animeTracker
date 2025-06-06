@@ -71,7 +71,7 @@ class RobustnessTests(TestCase):
 
         response = self.client.get(reverse('home'))
         self.assertContains(response, "Anime Sans Score")
-        self.assertContains(response, "Genre inconnu")
+        self.assertContains(response, "Genres non disponibles")
 
     @patch('nikki.views.get_anime_genres')
     @patch('nikki.views.requests.get')
