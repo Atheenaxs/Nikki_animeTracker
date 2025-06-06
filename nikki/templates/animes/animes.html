@@ -30,14 +30,19 @@
         </div>
 
         <!-- Bouton + -->
-        <button class="add-to-list-btn absolute top-2 right-2 bg-white text-black rounded-full px-2 py-1 text-lg font-bold shadow hover:bg-gray-200 z-10">+</button>
+        <button class="add-to-list-btn absolute top-2 right-2 bg-white text-black rounded-full px-2 py-1 text-lg font-bold shadow hover:bg-gray-200 z-10"
+          data-authenticated="{% if user.is_authenticated %}true{% else %}false{% endif %}">
+          +
+        </button>
 
+        {% if user.is_authenticated %}
         <!-- Menu déroulant -->
         <div class="list-menu hidden absolute top-10 right-2 bg-white text-black rounded shadow z-20">
           <button class="list-option block px-4 py-2 hover:bg-gray-100" data-status="toWatch">À voir</button>
           <button class="list-option block px-4 py-2 hover:bg-gray-100" data-status="watching">En cours</button>
           <button class="list-option block px-4 py-2 hover:bg-gray-100" data-status="finished">Terminé</button>
         </div>
+        {% endif %}
       </div>
     {% endfor %}
   </div>
