@@ -8,9 +8,9 @@ from django.contrib.auth.hashers import make_password
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
-from .models import Anime, UserAnime
-
-from nikki.utils import get_anime_genres
+from .models import Anime, Episode, UserAnime, UserEpisodeView
+from nikki.utils import get_anime_genres, get_or_create_anime_or_404, create_episodes
+from django.http import HttpResponseNotFound
 
 User = get_user_model()
 
@@ -211,6 +211,10 @@ def add_anime_to_list(request):
             'release_date': None
         }
     )
+    if created:
+        from .utils import create__episodes
+        create__episodes(anime)
+        anime.refresh_from_db()
 
     # Crée ou met à jour la ligne UserAnime
     ua, created_ua = UserAnime.objects.update_or_create(
@@ -218,6 +222,16 @@ def add_anime_to_list(request):
         anime=anime,
         defaults={'status': status}
     )
+
+    # Si l'utilisateur choisit "finished", marquer tous les épisodes comme vus
+    if status == 'finished':
+        from .models import Episode, UserEpisodeView
+
+        episodes = Episode.objects.filter(anime=anime)
+        for ep in episodes:
+            ep_view, _ = UserEpisodeView.objects.get_or_create(user=request.user, episode=ep)
+            ep_view.is_watched = True
+            ep_view.save()
 
     return JsonResponse({'success': True, 'created': created_ua})
 
@@ -239,12 +253,105 @@ def change_anime_status_ajax(request):
 
     return JsonResponse({"success": True})
 
-@require_POST
 @login_required
 def remove_anime(request, user_anime_id):
-    try:
-        user_anime = UserAnime.objects.get(id=user_anime_id, user=request.user)
-        user_anime.delete()
-        return JsonResponse({'success': True})
-    except UserAnime.DoesNotExist:
-        return JsonResponse({'success': False, 'error': 'Not found'}, status=404)
+    user_anime = get_object_or_404(UserAnime, id=user_anime_id, user=request.user)
+    anime = user_anime.anime
+
+    # Supprimer l'entrée UserAnime
+    user_anime.delete()
+
+    # Décoche tous les épisodes liés (option 1 : supprimer les vues)
+    UserEpisodeView.objects.filter(
+        user=request.user,
+        episode__anime=anime
+    ).delete()
+
+    # (option 2 : décocher sans supprimer)
+    # views = UserEpisodeView.objects.filter(user=request.user, episode__anime=anime)
+    # for view in views:
+    #     view.is_watched = False
+    #     view.save()
+
+    return JsonResponse({'success': True})
+    
+    
+def anime_detail(request, anime_id):
+    anime = get_or_create_anime_or_404(request, anime_id)
+    if isinstance(anime, HttpResponseNotFound):
+        return anime
+
+    if not Episode.objects.filter(anime=anime).exists():
+        create_episodes(anime)
+        anime.refresh_from_db()  # met à jour nb_episodes
+
+    episodes = []
+    seen_episode_ids = []
+    user_anime = None
+    user_anime_status = None
+
+    if anime.nb_episodes > 1:
+        episodes = Episode.objects.filter(anime=anime).order_by("episode_number")
+
+        if request.user.is_authenticated:
+            user_anime = UserAnime.objects.filter(user=request.user, anime=anime).first()
+            user_anime_status = user_anime.status if user_anime else None
+
+            if user_anime and user_anime.status == 'finished':
+                seen_episode_ids = list(episodes.values_list("id", flat=True))
+            else:
+                seen_episode_ids = list(
+                    UserEpisodeView.objects.filter(
+                        user=request.user,
+                        episode__in=episodes,
+                        is_watched=True
+                    ).values_list("episode__id", flat=True)
+                )
+    else:
+        if request.user.is_authenticated:
+            user_anime = UserAnime.objects.filter(user=request.user, anime=anime).first()
+            user_anime_status = user_anime.status if user_anime else None
+
+    return render(request, 'animes/anime_detail.html', {
+        'anime': anime,
+        'episodes': episodes,
+        'seen_episode_ids': seen_episode_ids,
+        'user_anime': user_anime,
+        'user_anime_status': user_anime_status,
+    })
+
+
+@login_required
+def toggle_episode_view(request):
+    data = json.loads(request.body)
+    episode_id = data.get('episode_id')
+    watched = str(data.get('watched', 'false')).lower() == 'true'
+
+    episode = get_object_or_404(Episode, pk=episode_id)
+    anime = episode.anime
+
+    # Met à jour la vue de l’épisode
+    ep_view, _ = UserEpisodeView.objects.get_or_create(user=request.user, episode=episode)
+    ep_view.is_watched = watched
+    ep_view.save()
+
+    # Compte le nombre d’épisodes vus
+    total_eps = anime.nb_episodes or 1
+    seen_eps = UserEpisodeView.objects.filter(
+        user=request.user,
+        episode__anime=anime,
+        is_watched=True
+    ).count()
+
+    ua, _ = UserAnime.objects.get_or_create(user=request.user, anime=anime)
+
+    # Ne touche pas aux autres épisodes ! On met juste à jour le statut
+    if seen_eps == total_eps:
+        ua.status = 'finished'
+    else:
+        ua.status = 'watching'
+    ua.save()
+
+    return JsonResponse({"success": True})
+
+

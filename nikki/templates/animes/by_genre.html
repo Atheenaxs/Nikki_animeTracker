@@ -5,20 +5,24 @@
   <h2 class="text-2xl md:text-3xl font-bold mt-6 mb-10">Animes - {{ genre.name }}</h2>
   <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 mt-10">
     {% for anime in animes %}
-      <div class="poster-card rounded-lg overflow-hidden bg-card text-left relative" data-anime-id="{{ anime.mal_id }}">
-        <div class="relative">
-          <img src="{{ anime.images.jpg.image_url }}" alt="{{ anime.title }}" class="w-full h-auto object-cover" />
-          <div class="poster-info absolute inset-0 p-4 flex flex-col justify-end">
-            <div class="flex items-center mb-1">
-              <div class="w-4 h-4 flex items-center justify-center text-yellow-400 mr-1">
-                <i class="ri-star-fill ri-sm"></i>
+      <div class="poster-card rounded-lg overflow-hidden bg-card text-left relative group" data-anime-id="{{ anime.mal_id }}">
+
+        <!-- Lien vers la page détail -->
+        <a href="{% url 'anime_detail' anime.mal_id %}" class="block">
+          <div class="relative">
+            <img src="{{ anime.images.jpg.image_url }}" alt="{{ anime.title }}" class="w-full h-auto object-cover" />
+            <div class="poster-info absolute inset-0 p-4 flex flex-col justify-end">
+              <div class="flex items-center mb-1">
+                <div class="w-4 h-4 flex items-center justify-center text-yellow-400 mr-1">
+                  <i class="ri-star-fill ri-sm"></i>
+                </div>
+                <span class="text-sm">{{ anime.score|default:"—" }}</span>
               </div>
-              <span class="text-sm">{{ anime.score|default:"—" }}</span>
+              <h3 class="text-lg font-semibold truncate">{{ anime.title }}</h3>
+              <p class="text-sm text-gray-300 truncate">{{ anime.type }} {% if anime.year %}- {{ anime.year }}{% endif %}</p>
             </div>
-            <h3 class="text-lg font-semibold truncate">{{ anime.title }}</h3>
-            <p class="text-sm text-gray-300 truncate">{{ anime.type }} {% if anime.year %}- {{ anime.year }}{% endif %}</p>
           </div>
-        </div>
+        </a>
 
         <!-- Bouton + -->
         <button class="add-to-list-btn absolute top-2 right-2 bg-white text-black rounded-full px-2 py-1 text-lg font-bold shadow hover:bg-gray-200 z-10"
