@@ -53,19 +53,8 @@ class Migration(migrations.Migration):
                 ('image_url', models.URLField(blank=True, null=True)),
                 ('status', models.CharField(max_length=50)),
                 ('release_date', models.DateField(blank=True, null=True)),
+                ('mal_id', models.IntegerField(unique=True)),
             ],
-        ),
-        migrations.CreateModel(
-            name='Season',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('season_number', models.IntegerField()),
-                ('title', models.CharField(blank=True, max_length=255)),
-                ('anime', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='nikki.anime')),
-            ],
-            options={
-                'unique_together': {('anime', 'season_number')},
-            },
         ),
         migrations.CreateModel(
             name='Episode',
@@ -74,22 +63,10 @@ class Migration(migrations.Migration):
                 ('episode_number', models.IntegerField()),
                 ('title', models.CharField(max_length=255)),
                 ('air_date', models.DateField(blank=True, null=True)),
-                ('season', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='nikki.season')),
+                ('anime', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='nikki.anime')),
             ],
             options={
-                'unique_together': {('season', 'episode_number')},
-            },
-        ),
-        migrations.CreateModel(
-            name='UserSeasonView',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('is_watched', models.BooleanField(default=False)),
-                ('season', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='nikki.season')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-            ],
-            options={
-                'unique_together': {('user', 'season')},
+                'unique_together': {('anime', 'episode_number')},
             },
         ),
         migrations.CreateModel(
