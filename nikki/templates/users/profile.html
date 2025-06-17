@@ -135,4 +135,39 @@
     <div id="profileError" class="text-red-500 hidden text-center pt-2">Erreur lors de l'enregistrement</div>
   </form>
 </div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".remove-anime-btn").forEach(button => {
+    button.addEventListener("click", async () => {
+      const url = button.dataset.removeUrl;
+      if (!url) return alert("URL manquante");
+
+      const csrfInput = document.querySelector("input[name=csrfmiddlewaretoken]");
+      const csrfToken = csrfInput ? csrfInput.value : null;
+      if (!csrfToken) return alert("CSRF token introuvable");
+
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": csrfToken,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({}) // obligatoire car Content-Type est JSON
+        });
+
+        if (response.ok) {
+          location.reload();
+        } else {
+          const data = await response.json().catch(() => ({}));
+          alert(data.error || "Erreur serveur");
+        }
+      } catch (err) {
+        alert("Erreur réseau");
+        console.error(err);
+      }
+    });
+  });
+});
+</script>
 {% endblock %}
