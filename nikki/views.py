@@ -150,6 +150,29 @@ def profile_view(request):
     watching = UserAnime.objects.filter(user=request.user, status='watching').select_related('anime')
     finished = UserAnime.objects.filter(user=request.user, status='finished').select_related('anime')
 
+    # Calcul temps de visionnage en minutes
+    total_minutes = 0
+
+    all_seen_episodes = UserEpisodeView.objects.filter(
+        user=request.user,
+        is_watched=True,
+        episode__anime__in=[ua.anime for ua in watching.union(finished)]
+    ).select_related('episode')
+
+    for view in all_seen_episodes:
+        if view.episode.duration:
+            total_minutes += int(view.episode.duration)
+
+    # Mise à jour du champ `watch_time` sur le modèle utilisateur
+    if request.user.watch_time != total_minutes:
+        request.user.watch_time = total_minutes
+        request.user.save(update_fields=["watch_time"])
+
+    # Format heures:minutes
+    hours = total_minutes // 60
+    minutes = total_minutes % 60
+    formatted_duration = f"{hours}h {minutes}min" if total_minutes else "0h"
+
     anime_lists = [
         ("À voir plus tard", to_watch),
         ("En cours", watching),
@@ -161,6 +184,7 @@ def profile_view(request):
         'to_watch': to_watch,
         'watching': watching,
         'finished': finished,
+        'formatted_duration': formatted_duration,
     })
 
 
@@ -207,7 +231,7 @@ def add_anime_to_list(request):
         defaults={
             'title': title,
             'image_url': image_url,
-            'status': '',  # ou un champ par défaut
+            'status': '',
             'release_date': None
         }
     )
@@ -222,7 +246,7 @@ def add_anime_to_list(request):
         defaults={'status': status}
     )
 
-    # Si l'utilisateur choisit "finished", marquer tous les épisodes comme vus
+    # Si statut terminé → marquer tous les épisodes comme vus
     if status == 'finished':
         from .models import Episode, UserEpisodeView
 
@@ -233,6 +257,7 @@ def add_anime_to_list(request):
             ep_view.save()
 
     return JsonResponse({'success': True, 'created': created_ua})
+
 
 @require_POST
 @login_required
