@@ -236,8 +236,7 @@ def add_anime_to_list(request):
         }
     )
     if created:
-        from .utils import create__episodes
-        create__episodes(anime)
+        create_episodes(anime)
         anime.refresh_from_db()
 
     # Crée ou met à jour la ligne UserAnime
@@ -309,6 +308,11 @@ def anime_detail(request, anime_id):
     if not Episode.objects.filter(anime=anime).exists():
         create_episodes(anime)
         anime.refresh_from_db()  # met à jour nb_episodes
+    else:
+        count = Episode.objects.filter(anime=anime).count()
+        if count != anime.nb_episodes:
+            anime.nb_episodes = count
+            anime.save()
 
     episodes = []
     seen_episode_ids = []
