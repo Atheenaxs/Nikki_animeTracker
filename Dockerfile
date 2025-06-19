@@ -18,11 +18,12 @@ RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
 # Étape 5 : Copier le reste du code
 COPY . .
 
-RUN python manage.py collectstatic --noinput
+# Étape 6 : Rendre le script wait-for-it exécutable (si utilisé)
 COPY wait-for-it.sh /app/wait-for-it.sh
 RUN chmod +x /app/wait-for-it.sh
-# Étape 6 : Exposer le port Django
+
+# Étape 7 : Exposer le port utilisé par Django/WSGI
 EXPOSE 8000
 
-# Étape 7 : Commande de lancement
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Étape 8 : Lancer collectstatic + serveur WSGI (gunicorn recommandé en prod)
+CMD ["sh", "-c", "python manage.py collectstatic --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:8000"]
