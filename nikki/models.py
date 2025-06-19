@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
     email = models.EmailField(unique=True)
+    watch_time = models.PositiveIntegerField(default=0)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username'] 
@@ -52,6 +53,7 @@ class Episode(models.Model):
     title = models.CharField(max_length=255)
     title_fr = models.CharField(max_length=255, blank=True, null=True)
     air_date = models.DateField(blank=True, null=True)
+    duration = models.CharField(max_length=50, blank=True, null=True)
 
     class Meta:
         unique_together = ('anime', 'episode_number')

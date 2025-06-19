@@ -1,7 +1,7 @@
 import requests
 from django.utils.text import slugify
 from datetime import datetime
-from .models import Anime, Episode
+from .models import Anime, Episode, UserEpisodeView
 from django.http import HttpResponseNotFound
 from deep_translator import GoogleTranslator, exceptions
 
@@ -48,6 +48,19 @@ def get_or_create_anime_or_404(request, mal_id):
         return anime
 
 def create_episodes(anime):
+    # D'abord on récupère les infos générales pour avoir la durée
+    anime_info = requests.get(f"https://api.jikan.moe/v4/anime/{anime.mal_id}")
+    episode_duration_minutes = None
+
+    if anime_info.status_code == 200:
+        duration_str = anime_info.json().get("data", {}).get("duration", "")
+        if duration_str:
+            try:
+                # Exemple : "24 min per ep"
+                episode_duration_minutes = int(duration_str.split(" ")[0])
+            except Exception:
+                pass
+
     base_url = f"https://api.jikan.moe/v4/anime/{anime.mal_id}/episodes"
     page = 1
     episodes_created = 0
@@ -81,7 +94,8 @@ def create_episodes(anime):
                     episode_number=ep.get("mal_id"),
                     title=title_en,
                     title_fr=title_fr,
-                    air_date=air_date
+                    air_date=air_date,
+                    duration=episode_duration_minutes
                 )
                 episodes_created += 1
 
@@ -91,6 +105,7 @@ def create_episodes(anime):
         page += 1
 
     total = Episode.objects.filter(anime=anime).count()
+    print(total)
     if not total :
         anime.nb_episodes = 1
     else :
